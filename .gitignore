@@ -1,0 +1,48 @@
+```
+# Dependency directories
+vendor/
+node_modules/
+
+# Laravel specific
+bootstrap/cache/
+storage/framework/cache/data/
+storage/framework/sessions/
+storage/framework/views/
+storage/logs/
+database/seeds/
+database/factories/
+
+# Environment variables
+.env
+.env.local
+.env.*
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Build and distribution
+dist/
+build/
+public/build/
+
+# PHP specific
+*.php~
+*.swp
+
+# Composer
+composer.lock
+
+# Vite
+vite.config.js
+```

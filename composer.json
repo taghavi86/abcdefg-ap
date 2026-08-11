@@ -1,0 +1,7 @@
+{
+    "require": {
+        "laravel/sanctum": "^4.3",
+        "spatie/laravel-permission": "^6.25",
+        "intervention/image": "^3.11"
+    }
+}
