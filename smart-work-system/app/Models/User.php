@@ -27,17 +27,16 @@ class User extends Authenticatable
         'national_code',
         'email',
         'password',
-        'level',
-        'coins',
-        'total_earnings',
-        'accuracy_score',
-        'speed_score',
-        'is_active',
+        'level_id',
+        'income_multiplier',
+        'total_coins',
+        'current_coins',
+        'referral_code',
+        'referred_by',
+        'status',
         'last_level_test_at',
         'consecutive_days',
         'last_activity_at',
-        'referral_code',
-        'referred_by',
     ];
 
     /**
@@ -62,7 +61,8 @@ class User extends Authenticatable
             'password' => 'hashed',
             'last_level_test_at' => 'datetime',
             'last_activity_at' => 'datetime',
-            'is_active' => 'boolean',
+            'status' => 'boolean',
+            'income_multiplier' => 'decimal:1',
         ];
     }
 
@@ -81,9 +81,9 @@ class User extends Authenticatable
     }
 
     // Relationships
-    public function levelData(): HasOne
+    public function level(): BelongsTo
     {
-        return $this->hasOne(UserLevel::class);
+        return $this->belongsTo(UserLevel::class, 'level_id');
     }
 
     public function responses(): HasMany
@@ -124,22 +124,20 @@ class User extends Authenticatable
     // Accessors
     public function getIncomeMultiplierAttribute(): float
     {
-        return match($this->level) {
-            'base' => 1.0,
-            'advanced' => 2.0,
-            'elite' => 3.5,
-            default => 1.0,
-        };
+        if ($this->level) {
+            return (float) $this->level->income_multiplier;
+        }
+        return 1.0;
     }
 
     // Scopes
     public function scopeActive($query)
     {
-        return $query->where('is_active', true);
+        return $query->where('status', true);
     }
 
-    public function scopeLevel($query, $level)
+    public function scopeLevel($query, $levelId)
     {
-        return $query->where('level', $level);
+        return $query->where('level_id', $levelId);
     }
 }
