@@ -1,0 +1,483 @@
+{
+  "info": {
+    "_postman_id": "smart-work-system-api",
+    "name": "Smart Work System API",
+    "description": "مجموعه کامل APIهای سامانه میز کار هوشمند",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "احراز هویت",
+      "item": [
+        {
+          "name": "ثبت‌نام کاربر",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"09123456789\",\n  \"national_code\": \"1234567890\",\n  \"name\": \"نام کاربر\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ورود کاربر",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"09123456789\",\n  \"password\": \"password123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "خروج کاربر",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "logout"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "رفرش توکن",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/refresh",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "refresh"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "تعیین سطح",
+      "item": [
+        {
+          "name": "دریافت اطلاعات آزمون",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/level-assessment/info",
+              "host": ["{{base_url}}"],
+              "path": ["level-assessment", "info"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "شروع آزمون تعیین سطح",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/level-assessment/start",
+              "host": ["{{base_url}}"],
+              "path": ["level-assessment", "start"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ارسال پاسخ‌های آزمون",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"assessment_id\": 1,\n  \"responses\": [\n    {\n      \"question_id\": 1,\n      \"answer\": \"گزینه 1\",\n      \"response_time\": 5\n    },\n    {\n      \"question_id\": 2,\n      \"answer\": \"گزینه 2\",\n      \"response_time\": 3\n    },\n    {\n      \"question_id\": 3,\n      \"answer\": \"گزینه 1\",\n      \"response_time\": 8\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/level-assessment/submit",
+              "host": ["{{base_url}}"],
+              "path": ["level-assessment", "submit"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "دریافت نتیجه آزمون",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/level-assessment/result",
+              "host": ["{{base_url}}"],
+              "path": ["level-assessment", "result"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "میز کار هوشمند",
+      "item": [
+        {
+          "name": "دریافت وظایف",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/workspace/tasks?limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["workspace", "tasks"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "ارسال پاسخ وظیفه",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"task_id\": 1,\n  \"responses\": [\n    {\n      \"question_id\": 1,\n      \"answer\": \"پاسخ کاربر\"\n    },\n    {\n      \"question_id\": 2,\n      \"answer\": \"پاسخ کاربر\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/workspace/submit",
+              "host": ["{{base_url}}"],
+              "path": ["workspace", "submit"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "آمار کاربر در میز کار",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/workspace/stats",
+              "host": ["{{base_url}}"],
+              "path": ["workspace", "stats"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "پروفایل کاربر",
+      "item": [
+        {
+          "name": "اطلاعات پروفایل",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/profile",
+              "host": ["{{base_url}}"],
+              "path": ["profile"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "نشان‌های افتخار",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/profile/achievements",
+              "host": ["{{base_url}}"],
+              "path": ["profile", "achievements"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "کاربران دعوت شده",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/profile/referrals",
+              "host": ["{{base_url}}"],
+              "path": ["profile", "referrals"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "کد دعوت من",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/profile/referral-code",
+              "host": ["{{base_url}}"],
+              "path": ["profile", "referral-code"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "سیستم تشویقی",
+      "item": [
+        {
+          "name": "رتبه‌بندی هفتگی",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/rankings/weekly",
+              "host": ["{{base_url}}"],
+              "path": ["rankings", "weekly"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "چالش‌های فعال",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/challenges/active",
+              "host": ["{{base_url}}"],
+              "path": ["challenges", "active"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "پیام‌های هوشمند",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/smart-messages",
+              "host": ["{{base_url}}"],
+              "path": ["smart-messages"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
