@@ -33,9 +33,11 @@ class UserFactory extends Factory
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
             'referral_code' => Str::random(10),
-            'level' => 'base',
-            'coins' => 0,
-            'is_active' => true,
+            'level_id' => null,
+            'income_multiplier' => 1.0,
+            'total_coins' => 0,
+            'current_coins' => 0,
+            'status' => true,
         ];
     }
 

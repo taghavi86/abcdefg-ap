@@ -16,6 +16,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // First seed user levels
+        $this->call(UserLevelSeeder::class);
+
+        // Get base level
+        $baseLevel = \App\Models\UserLevel::where('slug', 'basic')->first();
+
         // Create admin user
         User::factory()->create([
             'name' => 'Admin User',
@@ -24,6 +30,8 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@example.com',
             'password' => bcrypt('password'),
             'referral_code' => Str::random(10),
+            'level_id' => $baseLevel?->id,
+            'status' => true,
         ]);
 
         // Create test user
@@ -34,6 +42,8 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
             'password' => bcrypt('password'),
             'referral_code' => Str::random(10),
+            'level_id' => $baseLevel?->id,
+            'status' => true,
         ]);
     }
 }
