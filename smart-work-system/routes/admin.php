@@ -28,13 +28,21 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(functi
         Route::post('/{image}/toggle-status', [ImageController::class, 'toggleStatus']);
     });
 
-    // Question Management (placeholder - would be similar to ImageController)
+    // Question Management
     Route::prefix('questions')->group(function () {
-        // Routes would be added when QuestionController is created
+        Route::get('/', [QuestionController::class, 'index']);
+        Route::post('/', [QuestionController::class, 'store']);
+        Route::put('/{question}', [QuestionController::class, 'update']);
+        Route::delete('/{question}', [QuestionController::class, 'destroy']);
+        Route::get('/image/{image}', [QuestionController::class, 'getByImage']);
+        Route::get('/image/{image}/export', [QuestionController::class, 'exportByImage']);
+        Route::post('/{question}/toggle-status', [QuestionController::class, 'toggleStatus']);
     });
 
     // Response Review
     Route::prefix('responses')->group(function () {
+        Route::get('/', [ResponseReviewController::class, 'index']);
+        Route::get('/export', [ResponseReviewController::class, 'export']);
         Route::get('/pending', [ResponseReviewController::class, 'getPending']);
         Route::post('/{response}/approve', [ResponseReviewController::class, 'approve']);
         Route::post('/{response}/reject', [ResponseReviewController::class, 'reject']);

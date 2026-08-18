@@ -16,8 +16,9 @@ return new class extends Migration
             $table->foreignId('image_id')->constrained()->onDelete('cascade');
             $table->text('question_text');
             $table->enum('type', ['workbench', 'level_test'])->default('workbench');
-            $table->json('options')->nullable(); // For level_test multiple choice: ["option1", "option2", "option3"]
-            $table->string('correct_answer')->nullable(); // For level_test correct answer
+            // For workbench: no options needed (numeric answer only)
+            // For level_test: store correct answer for automatic scoring
+            $table->string('correct_answer')->nullable(); // Numeric answer for level_test
             $table->integer('accuracy_score')->default(5); // Max 5 coins for accuracy (0 or 5)
             $table->integer('speed_score')->default(0); // 0-5 coins based on speed
             $table->integer('total_score')->default(10); // Max 10 coins per question
