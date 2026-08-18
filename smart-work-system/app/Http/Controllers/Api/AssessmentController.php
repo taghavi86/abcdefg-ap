@@ -38,32 +38,32 @@ class AssessmentController extends Controller
         // Check if user can take the assessment
         if (!$user->canTakeAssessment()) {
             $lastAttempt = $user->responses()
-                ->where('is_assessment', true)
+                ->where('is_level_test', true)
                 ->latest('created_at')
                 ->first();
             
-            $nextAvailableDate = $lastAttempt->created_at->addDays(
-                $user->responses()->where('is_assessment', true)->count() === 1 ? 1 : 3
+            $nextAvailableDate = $lastAttempt?->created_at->addDays(
+                $user->responses()->where('is_level_test', true)->count() === 1 ? 1 : 3
             );
 
             return response()->json([
                 'success' => false,
                 'message' => 'برای شرکت مجدد در آزمون باید صبر کنید',
                 'data' => [
-                    'next_available_date' => $nextAvailableDate->toJalaliDateTime(),
+                    'next_available_date' => $nextAvailableDate?->toJalaliDateTime(),
                 ],
             ], 403);
         }
 
-        // Get 3 random questions for assessment
-        // In a real scenario, you might want to track which exam number (1-4) this is
+        // Get 3 random level_test questions
         $questions = Question::where('is_active', true)
+            ->where('type', 'level_test')
             ->inRandomOrder()
             ->limit(3)
-            ->get(['id', 'text', 'option_a', 'option_b', 'option_c', 'option_d', 'image_id']);
+            ->get(['id', 'image_id', 'question_text', 'order_index']);
 
-        // Load image URLs if questions have images
-        $questions->load(['image:id,url,download_url']);
+        // Load image URLs
+        $questions->load(['image:id,image_path,download_host_url']);
 
         return response()->json([
             'success' => true,
@@ -71,21 +71,15 @@ class AssessmentController extends Controller
                 'questions' => $questions->map(function ($question) {
                     return [
                         'id' => $question->id,
-                        'text' => $question->text,
-                        'options' => [
-                            'A' => $question->option_a,
-                            'B' => $question->option_b,
-                            'C' => $question->option_c,
-                            'D' => $question->option_d,
-                        ],
-                        'image' => $question->image ? [
-                            'url' => $question->image->getUrlAttribute(),
-                            'download_url' => $question->image->download_url,
-                        ] : null,
+                        'image_id' => $question->image_id,
+                        'image_url' => $question->image->getFullImageUrlAttribute() ?? null,
+                        'question_text' => $question->question_text,
+                        'order_index' => $question->order_index,
+                        'answer_type' => 'numeric', // Only numeric answers
                     ];
                 }),
                 'total_questions' => 3,
-                'time_limit_per_question' => config('assessment.time_limit_per_question', 60), // 60 seconds default
+                'time_limit_per_question' => config('assessment.time_limit_per_question', 60),
             ],
         ]);
     }
@@ -116,8 +110,8 @@ class AssessmentController extends Controller
             foreach ($validated['responses'] as $response) {
                 $question = Question::findOrFail($response['question_id']);
                 
-                // Calculate accuracy score (max 5 coins)
-                $isCorrect = $question->correct_option === $response['selected_option'];
+                // For level_test, compare numeric answer
+                $isCorrect = strtolower(trim((string)$response['user_answer'])) === strtolower(trim((string)$question->correct_answer));
                 $accuracyScore = $isCorrect ? 5 : 0;
 
                 // Calculate speed score based on response time
@@ -134,27 +128,32 @@ class AssessmentController extends Controller
                 $userResponse = UserResponse::create([
                     'user_id' => $user->id,
                     'question_id' => $question->id,
-                    'selected_option' => $response['selected_option'],
+                    'image_id' => $question->image_id,
+                    'user_answer' => (string)$response['user_answer'],
                     'is_correct' => $isCorrect,
-                    'response_time' => $responseTime,
-                    'score_earned' => $questionScore,
-                    'accuracy_score' => $accuracyScore,
-                    'speed_score' => $speedScore,
-                    'is_assessment' => true,
+                    'response_time_seconds' => $responseTime,
+                    'accuracy_score_earned' => $accuracyScore,
+                    'speed_score_earned' => $speedScore,
+                    'total_coins_earned' => $questionScore,
+                    'type' => 'level_test',
+                    'is_level_test' => true,
                     'status' => 'approved', // Assessment responses are auto-approved
                 ]);
 
                 $responsesData[] = [
                     'question_id' => $question->id,
+                    'image_id' => $question->image_id,
+                    'user_answer' => $userResponse->user_answer,
+                    'correct_answer' => $question->correct_answer,
                     'is_correct' => $isCorrect,
                     'score_earned' => $questionScore,
                 ];
             }
 
             // Update user's current score
-            // Note: We might want to keep track of best score or average
             $user->current_score = max($user->current_score, $totalScore);
             $user->total_coins += $totalCoins;
+            $user->verified_coins += $totalCoins; // Auto-approved for level test
             $user->save();
 
             // Update user level based on score
@@ -179,6 +178,7 @@ class AssessmentController extends Controller
                     'user' => [
                         'current_score' => $user->current_score,
                         'total_coins' => $user->total_coins,
+                        'verified_coins' => $user->verified_coins,
                         'level' => $user->level ? [
                             'id' => $user->level->id,
                             'name' => $user->level->name,

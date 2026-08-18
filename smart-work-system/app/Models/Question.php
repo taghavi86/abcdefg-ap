@@ -16,7 +16,6 @@ class Question extends Model
         'image_id',
         'question_text',
         'type',
-        'options',
         'correct_answer',
         'accuracy_score',
         'speed_score',
@@ -28,7 +27,6 @@ class Question extends Model
     ];
 
     protected $casts = [
-        'options' => 'array',
         'accuracy_score' => 'integer',
         'speed_score' => 'integer',
         'total_score' => 'integer',
@@ -122,5 +120,26 @@ class Question extends Model
         $speedScore = self::calculateSpeedScore($responseTimeSeconds);
         
         return min($accuracyScore + $speedScore, 10); // Max 10 coins per question
+    }
+
+    /**
+     * Get user responses with user details for export
+     */
+    public function getUserResponsesForExport()
+    {
+        return $this->userResponses()
+            ->with(['user:id,name,family,email', 'image:id,title,image_path'])
+            ->get([
+                'id',
+                'user_id',
+                'user_answer',
+                'is_correct',
+                'response_time_seconds',
+                'total_coins_earned',
+                'type',
+                'is_level_test',
+                'status',
+                'created_at'
+            ]);
     }
 }

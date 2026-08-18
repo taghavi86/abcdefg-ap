@@ -23,7 +23,7 @@ class SubmitWorkResponseRequest extends FormRequest
     {
         return [
             'question_id' => ['required', 'integer', 'exists:questions,id'],
-            'selected_option' => ['required', 'string', 'in:A,B,C,D'],
+            'user_answer' => ['required', 'string', 'max:100'], // Numeric answer as string
             'response_time' => ['required', 'numeric', 'min:0'], // in seconds
         ];
     }
@@ -38,8 +38,8 @@ class SubmitWorkResponseRequest extends FormRequest
         return [
             'question_id.required' => 'شناسه سوال الزامی است',
             'question_id.exists' => 'سوال مورد نظر یافت نشد',
-            'selected_option.required' => 'گزینه انتخابی الزامی است',
-            'selected_option.in' => 'گزینه انتخابی باید A، B، C یا D باشد',
+            'user_answer.required' => 'پاسخ سوال الزامی است',
+            'user_answer.string' => 'پاسخ باید متنی باشد',
             'response_time.required' => 'زمان پاسخ‌دهی الزامی است',
             'response_time.numeric' => 'زمان پاسخ‌دهی باید عدد باشد',
         ];

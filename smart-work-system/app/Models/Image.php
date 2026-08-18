@@ -94,4 +94,23 @@ class Image extends Model
     {
         return 'BATCH_' . strtoupper(uniqid()) . '_' . time();
     }
+
+    /**
+     * Get all questions with answers for Excel export
+     */
+    public function getQuestionsWithAnswersForExport()
+    {
+        return $this->questions()
+            ->with('creator')
+            ->orderBy('order_index')
+            ->get([
+                'id',
+                'question_text',
+                'type',
+                'correct_answer',
+                'is_active',
+                'order_index',
+                'created_at'
+            ]);
+    }
 }

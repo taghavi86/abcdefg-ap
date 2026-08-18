@@ -24,7 +24,7 @@ class SubmitAssessmentRequest extends FormRequest
         return [
             'responses' => ['required', 'array', 'min:3', 'max:3'],
             'responses.*.question_id' => ['required', 'integer', 'exists:questions,id'],
-            'responses.*.selected_option' => ['required', 'string', 'in:A,B,C,D'],
+            'responses.*.user_answer' => ['required', 'string', 'max:100'], // Numeric answer as string
             'responses.*.response_time' => ['required', 'numeric', 'min:0'], // in seconds
         ];
     }
@@ -43,8 +43,8 @@ class SubmitAssessmentRequest extends FormRequest
             'responses.max' => 'حداکثر 3 سوال مجاز است',
             'responses.*.question_id.required' => 'شناسه سوال الزامی است',
             'responses.*.question_id.exists' => 'سوال مورد نظر یافت نشد',
-            'responses.*.selected_option.required' => 'گزینه انتخابی الزامی است',
-            'responses.*.selected_option.in' => 'گزینه انتخابی باید A، B، C یا D باشد',
+            'responses.*.user_answer.required' => 'پاسخ سوال الزامی است',
+            'responses.*.user_answer.string' => 'پاسخ باید متنی باشد',
             'responses.*.response_time.required' => 'زمان پاسخ‌دهی الزامی است',
             'responses.*.response_time.numeric' => 'زمان پاسخ‌دهی باید عدد باشد',
         ];
